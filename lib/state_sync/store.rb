@@ -21,7 +21,7 @@ class StateSync::Store
 
   # Shorthand key access when the YAML root is a Hash.
   def [](key)
-    data[key]
+    @mutex.synchronize { @data[key] }
   end
 
   # Force an immediate re-fetch from the configured provider.
