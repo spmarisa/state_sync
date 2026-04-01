@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
   spec.name    = "state_sync"
   spec.version = StateSync::VERSION
   spec.authors = ["Phaneendra Marisa"]
-  spec.summary = "Fetch and auto-refresh YAML-based feature flags and config from a GitHub repository."
+  spec.summary = "Fetch and auto-refresh YAML-based feature flags and config from a Git repository."
 
   spec.homepage = "https://github.com/spmarisa/state_sync"
   spec.license  = "WTFPL"
