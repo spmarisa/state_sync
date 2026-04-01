@@ -45,7 +45,7 @@ class StateSync::Store
   end
 
   def start_background_refresh
-    interval = StateSync.configuration.refresh_interval
+    interval = StateSync.configuration.auto_refresh_interval
 
     Thread.new do
       loop do

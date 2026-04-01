@@ -21,26 +21,17 @@ gem install state_sync
 
 ## Try it in IRB
 
-First install the gem:
-
-```bash
-gem install state_sync
-```
-
 Then start IRB and require the gem:
 
 ```bash
 irb
 ```
 
-```ruby
-require "state_sync"
-```
-
 Then in IRB:
 
 ```ruby
-# GitHub
+require "state_sync"
+
 StateSync.configure do |config|
   config.provider = :github
   config.repo     = "your-org/your-repo"
@@ -57,111 +48,21 @@ customers.reload!
 
 ---
 
-## GitHub setup
+## Configuration
 
-### Create a token
-
-**Fine-grained Personal Access Token (recommended):**
-
-1. Go to **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens**
-2. Click **Generate new token**
-3. Under **Repository access**, select the repo that holds your YAML files
-4. Under **Permissions → Repository permissions**, set **Contents** to **Read-only**
-5. Click **Generate token** and copy it
-
-**Classic Personal Access Token:**
-
-1. Go to **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)**
-2. Click **Generate new token (classic)**
-3. Select the **`repo`** scope
-4. Click **Generate token** and copy it
-
-### Store the token
-
-```bash
-# .env (never commit this)
-GITHUB_TOKEN=ghp_your_token_here
-```
-
-### Without auto refresh
-
-Data is fetched once when the server starts. It does not change until the server restarts.
+Token setup: [GITHUB.md](GITHUB.md) | [GITLAB.md](GITLAB.md)
 
 ```ruby
 StateSync.configure do |config|
-  config.provider     = :github
-  config.repo         = "your-org/your-repo"
-  config.token        = ENV["GITHUB_TOKEN"]
-  config.auto_refresh = false
-end
-
-customers = StateSync.load("config/customers.yml")
-customers["customer_ids"]   # => [1001, 1002, 1003]
-```
-
-### With auto refresh
-
-Data is fetched at startup and a background thread keeps it updated at the configured interval.
-
-```ruby
-StateSync.configure do |config|
-  config.provider         = :github
+  config.provider         = :github          # :github or :gitlab
   config.repo             = "your-org/your-repo"
-  config.token            = ENV["GITHUB_TOKEN"]
-  config.auto_refresh     = true
-  config.refresh_interval = 300   # seconds
+  config.token            = ENV["GITHUB_TOKEN"]  # optional for public repos
+  config.auto_refresh     = false            # true or false (default: false)
+  config.auto_refresh_interval = 300              # seconds, only required when auto_refresh is true
 end
 
 customers = StateSync.load("config/customers.yml")
-customers["customer_ids"]   # => always current
-```
-
----
-
-## GitLab setup
-
-### Create a token
-
-1. Go to **GitLab → Edit profile → Access tokens**
-2. Click **Add new token**
-3. Give it a name and set an expiry date
-4. Under **Select scopes**, check **`read_repository`**
-5. Click **Create personal access token** and copy it
-
-### Store the token
-
-```bash
-# .env (never commit this)
-GITLAB_TOKEN=glpat_your_token_here
-```
-
-### Without auto refresh
-
-```ruby
-StateSync.configure do |config|
-  config.provider     = :gitlab
-  config.repo         = "your-org/your-repo"
-  config.token        = ENV["GITLAB_TOKEN"]
-  config.auto_refresh = false
-end
-
-customers = StateSync.load("config/customers.yml")
-customers["customer_ids"]   # => [1001, 1002, 1003]
-```
-
-### With auto refresh
-
-```ruby
-StateSync.configure do |config|
-  config.provider         = :gitlab
-  config.repo             = "your-org/your-repo"
-  config.token            = ENV["GITLAB_TOKEN"]
-  config.auto_refresh     = true
-  config.refresh_interval = 300   # seconds
-end
-
-customers = StateSync.load("config/customers.yml")
-customers["customer_ids"]   # => always current
+customers["customer_ids"]
 ```
 
 ---

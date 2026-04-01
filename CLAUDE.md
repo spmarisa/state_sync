@@ -35,10 +35,10 @@ Exception: `lib/state_sync.rb` defines the top-level `module StateSync` and `lib
 ### Key classes
 
 - **`StateSync` (module)** — public API. `StateSync.configure { |c| }` sets global config; `StateSync.load("path/to/file.yml")` returns a `Store`.
-- **`StateSync::Configuration`** — holds `provider`, `repo`, `github_token`, `gitlab_token`, `auto_refresh`, `refresh_interval`. Validated on first fetch.
+- **`StateSync::Configuration`** — holds `provider`, `repo`, `github_token`, `gitlab_token`, `auto_refresh`, `auto_refresh_interval`. Validated on first fetch.
 - **`StateSync::GithubFetcher`** (`lib/state_sync/fetchers/`) — calls `GET /repos/{owner}/{repo}/contents/{path}`, decodes base64 response, returns raw YAML string.
 - **`StateSync::GitlabFetcher`** (`lib/state_sync/fetchers/`) — calls GitLab raw file endpoint with `ref=HEAD` (always default branch), returns raw YAML string.
-- **`StateSync::Store`** — wraps a single loaded file. Fetches on init, exposes `data` / `[]` / `reload!`. When `auto_refresh` is true, spawns a background `Thread` that re-fetches every `refresh_interval` seconds; errors are warned to stderr and previous data is kept.
+- **`StateSync::Store`** — wraps a single loaded file. Fetches on init, exposes `data` / `[]` / `reload!`. When `auto_refresh` is true, spawns a background `Thread` that re-fetches every `auto_refresh_interval` seconds; errors are warned to stderr and previous data is kept.
 
 ### File organisation
 
@@ -47,7 +47,7 @@ Fetchers live in `lib/state_sync/fetchers/`. Add new provider fetchers there.
 ### Refresh modes
 
 - `auto_refresh: false` (default) — fetch once at startup, never again.
-- `auto_refresh: true` — fetch at startup + background thread refreshes every `refresh_interval` seconds.
+- `auto_refresh: true` — fetch at startup + background thread refreshes every `auto_refresh_interval` seconds.
 
 ### Auth
 
