@@ -26,7 +26,7 @@ class StateSync::Store
 
   # Force an immediate re-fetch from the configured provider.
   def reload!
-    @mutex.synchronize { fetch_and_cache }
+    fetch_and_cache
     self
   end
 
@@ -41,17 +41,19 @@ class StateSync::Store
 
   def fetch_and_cache
     content = @fetcher.fetch(@path)
-    @data   = YAML.safe_load(content)
+    parsed  = YAML.safe_load(content)
+    @mutex.synchronize { @data = parsed }
   end
 
   def start_background_refresh
     interval = StateSync.configuration.auto_refresh_interval
 
     Thread.new do
+      Thread.current.daemon = true
       loop do
         sleep interval
         begin
-          @mutex.synchronize { fetch_and_cache }
+          fetch_and_cache
         rescue => e
           warn "[StateSync] Failed to refresh '#{@path}': #{e.message}"
         end
