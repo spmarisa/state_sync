@@ -28,7 +28,7 @@ Token setup: [GITHUB.md](GITHUB.md) | [GITLAB.md](GITLAB.md)
 StateSync.configure do |config|
   config.provider              = :github          # :github or :gitlab
   config.repo                  = "your-org/your-repo"  # "owner/repo" on GitHub or GitLab
-  config.token                 = ENV["GITHUB_TOKEN"]   # optional for public repos
+  config.token                 = ENV["GITHUB_TOKEN"]   # optional for public repos, but always set in production — unauthenticated requests are limited to 60/hr vs 5,000/hr with a token
   config.auto_refresh          = false            # true or false (default: false)
   config.auto_refresh_interval = 300              # seconds, only required when auto_refresh is true
 end

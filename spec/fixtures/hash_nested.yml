@@ -1,0 +1,11 @@
+app:
+  name: my_app
+  settings:
+    theme: dark
+    language: en
+    advanced:
+      cache: true
+      ttl: 3600
+database:
+  host: localhost
+  port: 5432

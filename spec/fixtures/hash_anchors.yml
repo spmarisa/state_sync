@@ -1,0 +1,22 @@
+# This file demonstrates YAML anchor/alias syntax.
+# Note: YAML.safe_load does NOT support aliases by default — use YAML.load
+# or pass `aliases: true` (Ruby 2.8+) if you need alias resolution.
+# The expanded equivalent (what safe_load would produce if aliases were enabled)
+# is shown below as plain keys so the Store can load it.
+
+defaults:
+  timeout: 30
+  retries: 3
+  log_level: warn
+
+production:
+  timeout: 30
+  retries: 3
+  host: prod.example.com
+  log_level: error
+
+staging:
+  timeout: 30
+  retries: 3
+  host: staging.example.com
+  log_level: warn
