@@ -32,8 +32,8 @@ RSpec.describe StateSync::Store, "YAML type handling" do
       before { configure }
       subject(:store) { store_for("hash_simple.yml") }
 
-      it "returns a DataNode" do
-        expect(store.data).to be_a(StateSync::DataNode)
+      it "returns an OpenStruct" do
+        expect(store.data).to be_a(OpenStruct)
       end
 
       it "exposes keys via dot-access" do
@@ -67,9 +67,9 @@ RSpec.describe StateSync::Store, "YAML type handling" do
       before { configure }
       subject(:store) { store_for("hash_nested.yml") }
 
-      it "recursively wraps nested hashes in DataNode" do
-        expect(store.data.app).to be_a(StateSync::DataNode)
-        expect(store.data.app.settings.advanced).to be_a(StateSync::DataNode)
+      it "recursively wraps nested hashes in OpenStruct" do
+        expect(store.data.app).to be_a(OpenStruct)
+        expect(store.data.app.settings.advanced).to be_a(OpenStruct)
       end
 
       it "resolves deeply nested values" do
@@ -100,8 +100,8 @@ RSpec.describe StateSync::Store, "YAML type handling" do
         expect(store.data.scores).to eq [95, 87, 100]
       end
 
-      it "wraps Hash elements inside arrays in DataNode" do
-        expect(store.data.admins.first).to be_a(StateSync::DataNode)
+      it "wraps Hash elements inside arrays in OpenStruct" do
+        expect(store.data.admins.first).to be_a(OpenStruct)
         expect(store.data.admins.first.name).to eq "Alice"
         expect(store.data.admins.last.role).to eq "admin"
       end
@@ -211,8 +211,8 @@ RSpec.describe StateSync::Store, "YAML type handling" do
       before { configure }
       subject(:store) { store_for("array_of_hashes.yml") }
 
-      it "returns an Array of DataNodes" do
-        expect(store.data.first).to be_a(StateSync::DataNode)
+      it "returns an Array of OpenStructs" do
+        expect(store.data.first).to be_a(OpenStruct)
       end
 
       it "allows dot-access on each element" do

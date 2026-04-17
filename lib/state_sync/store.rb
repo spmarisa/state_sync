@@ -1,4 +1,5 @@
 require "yaml"
+require "ostruct"
 
 # Holds the parsed contents of a single YAML file fetched from GitHub or GitLab.
 # On initialization it fetches the file immediately. If auto_refresh is
@@ -18,7 +19,7 @@ class StateSync::Store
   # :struct (default) — dot-access via DataNode
   # :hash             — raw Ruby Hash / Array / scalar
   def data
-    StateSync.configuration.data_format == :hash ? raw_data : struct_data
+    @mutex.synchronize { @data }
   end
 
   # Shorthand key access (delegates to #data).
@@ -44,20 +45,16 @@ class StateSync::Store
   def fetch_and_cache
     content = @fetcher.fetch(@path)
     raw     = YAML.safe_load(content)
-    struct  = wrap_root(raw)
-    @mutex.synchronize { @raw = raw; @struct = struct }
+    parsed  = StateSync.configuration.data_format == :struct ? to_struct(raw) : raw
+    @mutex.synchronize { @data = parsed }
   end
 
-  def raw_data
-    @mutex.synchronize { @raw }
-  end
-
-  def struct_data
-    @mutex.synchronize { @struct }
-  end
-
-  def wrap_root(value)
-    StateSync::DataNode.wrap(value)
+  def to_struct(value)
+    case value
+    when Hash  then OpenStruct.new(value.transform_values { |v| to_struct(v) })
+    when Array then value.map { |v| to_struct(v) }
+    else value
+    end
   end
 
   def start_background_refresh

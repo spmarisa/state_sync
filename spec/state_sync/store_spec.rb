@@ -24,8 +24,8 @@ RSpec.describe StateSync::Store do
   subject(:store) { described_class.new("config/customers.yml") }
 
   describe "#data" do
-    it "returns a DataNode" do
-      expect(store.data).to be_a(StateSync::DataNode)
+    it "returns an OpenStruct" do
+      expect(store.data).to be_a(OpenStruct)
     end
 
     it "exposes top-level keys as methods" do
@@ -83,8 +83,8 @@ RSpec.describe StateSync::Store do
         .to_return(status: 200, body: yaml_content)
     end
 
-    it "fetches from gitlab and returns a DataNode" do
-      expect(store.data).to be_a(StateSync::DataNode)
+    it "fetches from gitlab and returns an OpenStruct" do
+      expect(store.data).to be_a(OpenStruct)
       expect(store.data.customer_ids).to eq [1, 2, 3]
       expect(store.data.feature_x).to be true
     end
