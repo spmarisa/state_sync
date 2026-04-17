@@ -20,7 +20,7 @@ graph TD
     subgraph RailsApp["Rails Application"]
         I[config/initializers/state_sync.rb]
         GEM[state_sync gem]
-        STORE["In-memory Store\n(thread-safe)"]
+        STORE["In-memory Store"]
         APP[Controllers / Services]
     end
 
@@ -44,7 +44,7 @@ sequenceDiagram
     participant APP as Rails App
 
     Note over I,GEM: Server Startup
-    I->>GEM: StateSync.configure(repo, token, auto_refresh)
+    I->>GEM: StateSync.configure(repo, token)
     I->>GEM: StateSync.load("customers.yml")
     GEM->>GH: GET /repos/owner/repo/contents/customers.yml
     GH-->>GEM: YAML content
@@ -54,28 +54,7 @@ sequenceDiagram
     Note over APP,STORE: Handling a Request
     APP->>STORE: CUSTOMERS["customer_ids"]
     STORE-->>APP: [1001, 1002, 1003]
-
-    Note over GEM,GH: Background Refresh (auto_refresh: true)
-    loop Every auto_refresh_interval seconds
-        GEM->>GH: GET /repos/owner/repo/contents/customers.yml
-        GH-->>GEM: Updated YAML content
-        GEM->>STORE: Swap data (mutex-protected)
-    end
 ```
 
 ---
 
-## Refresh Modes
-
-```mermaid
-flowchart LR
-    A[Rails Server Starts] --> B[StateSync.load called]
-    B --> C{auto_refresh?}
-    C -->|false| D[Fetch once\nData fixed until restart]
-    C -->|true| E[Fetch immediately]
-    E --> F[Start background thread]
-    F --> G[Sleep auto_refresh_interval]
-    G --> H[Re-fetch from GitHub/GitLab]
-    H --> I[Update in-memory store]
-    I --> G
-```

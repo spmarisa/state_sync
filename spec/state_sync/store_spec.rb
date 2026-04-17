@@ -10,7 +10,6 @@ RSpec.describe StateSync::Store do
     StateSync.configure do |c|
       c.repo         = "owner/repo"
       c.token        = "ghp_test"
-      c.auto_refresh = false
     end
 
     stub_request(:get, api_url)
@@ -76,7 +75,6 @@ RSpec.describe StateSync::Store do
         c.provider     = :gitlab
         c.repo         = "owner/repo"
         c.token        = "glpat_test"
-        c.auto_refresh = false
       end
 
       stub_request(:get, gitlab_url)

@@ -8,7 +8,6 @@
 
 No token is required. You can omit `config.token` entirely.
 However, unauthenticated requests are rate-limited to **60 requests/hour** per IP.
-If you enable `auto_refresh` with a short interval, you will hit this limit quickly.
 It is recommended to always provide a token even for public repos (authenticated limit is 5,000/hour).
 
 ---
@@ -85,43 +84,17 @@ config.token = Rails.application.credentials.dig(:github, :state_sync_token)
 | None (public repos)   | 60                |
 | Personal Access Token | 5,000             |
 
-If you enable `auto_refresh` with `auto_refresh_interval: 60` (every minute) and have 10 files loaded,
-that is 600 requests/hour — well within the authenticated limit but it will exceed the unauthenticated limit.
-Always use a token when `auto_refresh` is enabled.
-
 ---
 
-## Examples
-
-### Without auto refresh
-
-Data is fetched once when the server starts. It does not change until the server restarts.
+## Example
 
 ```ruby
 StateSync.configure do |config|
-  config.provider     = :github
-  config.repo         = "your-org/your-repo"
-  config.token        = ENV["GITHUB_TOKEN"]
-  config.auto_refresh = false
+  config.provider = :github
+  config.repo     = "your-org/your-repo"
+  config.token    = ENV["GITHUB_TOKEN"]
 end
 
 customers = StateSync.load("config/customers.yml")
 customers["customer_ids"]   # => [1001, 1002, 1003]
-```
-
-### With auto refresh
-
-Data is fetched at startup and a background thread keeps it updated at the configured interval.
-
-```ruby
-StateSync.configure do |config|
-  config.provider         = :github
-  config.repo             = "your-org/your-repo"
-  config.token            = ENV["GITHUB_TOKEN"]
-  config.auto_refresh     = true
-  config.auto_refresh_interval = 300   # seconds
-end
-
-customers = StateSync.load("config/customers.yml")
-customers["customer_ids"]   # => always current
 ```

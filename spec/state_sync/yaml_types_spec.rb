@@ -9,10 +9,9 @@ end
 RSpec.describe StateSync::Store, "YAML type handling" do
   def configure(data_format: :struct)
     StateSync.configure do |c|
-      c.repo         = "owner/repo"
-      c.token        = "ghp_test"
-      c.auto_refresh = false
-      c.data_format  = data_format
+      c.repo        = "owner/repo"
+      c.token       = "ghp_test"
+      c.data_format = data_format
     end
   end
 

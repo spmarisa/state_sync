@@ -1,7 +1,7 @@
 # state_sync
 
 A Ruby gem for fetching YAML-based feature flags and configuration from a GitHub or GitLab repository.
-Values are loaded at startup and can optionally be kept fresh in the background.
+Values are loaded at startup via `StateSync.load`.
 
 ## Installation
 
@@ -26,11 +26,10 @@ Token setup: [GITHUB.md](GITHUB.md) | [GITLAB.md](GITLAB.md)
 ```ruby
 # config/initializers/state_sync.rb
 StateSync.configure do |config|
-  config.provider              = :github          # :github or :gitlab
-  config.repo                  = "your-org/your-repo"  # "owner/repo" on GitHub or GitLab
-  config.token                 = ENV["GITHUB_TOKEN"]   # optional for public repos, but always set in production — unauthenticated requests are limited to 60/hr vs 5,000/hr with a token
-  config.auto_refresh          = false            # true or false (default: false)
-  config.auto_refresh_interval = 300              # seconds, only required when auto_refresh is true
+  config.provider     = :github          # :github or :gitlab
+  config.repo         = "your-org/your-repo"  # "owner/repo" on GitHub or GitLab
+  config.token        = ENV["GITHUB_TOKEN"]   # optional for public repos, but always set in production — unauthenticated requests are limited to 60/hr vs 5,000/hr with a token
+  config.data_format  = :struct          # :struct (default) — dot-access via OpenStruct; :hash — plain Ruby Hash
 end
 ```
 
@@ -64,7 +63,7 @@ feature_x: true
 
 ### Loading multiple files
 
-You can load as many files as you need — each gets its own store with independent data and refresh cycle. Define them in your initializer and use them anywhere in your app:
+You can load as many files as you need — each gets its own store with independent data. Define them in your initializer and use them anywhere in your app:
 
 ```ruby
 # config/initializers/state_sync.rb
