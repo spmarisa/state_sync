@@ -57,11 +57,7 @@ class StateSync::Store
   end
 
   def wrap_root(value)
-    case value
-    when Hash  then StateSync::DataNode.new(value)
-    when Array then value.map { |v| v.is_a?(Hash) ? StateSync::DataNode.new(v) : v }
-    else value
-    end
+    StateSync::DataNode.wrap(value)
   end
 
   def start_background_refresh

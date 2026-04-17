@@ -23,13 +23,17 @@ class StateSync::DataNode
     @hash
   end
 
+  def self.wrap(value)
+    case value
+    when Hash  then new(value)
+    when Array then value.map { |v| v.is_a?(Hash) ? new(v) : v }
+    else value
+    end
+  end
+
   private
 
   def wrap(value)
-    case value
-    when Hash  then StateSync::DataNode.new(value)
-    when Array then value.map { |v| v.is_a?(Hash) ? StateSync::DataNode.new(v) : v }
-    else value
-    end
+    self.class.wrap(value)
   end
 end
