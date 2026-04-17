@@ -1,0 +1,11 @@
+folded: >
+  this is a folded
+  block string that
+  becomes one line
+literal: |
+  this is a literal
+  block string that
+  keeps its newlines
+folded_strip: >-
+  no trailing newline
+  after this one

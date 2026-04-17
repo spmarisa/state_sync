@@ -14,14 +14,16 @@ class StateSync::Store
     start_background_refresh if StateSync.configuration.auto_refresh
   end
 
-  # Returns the parsed YAML data (Hash or Array depending on file content).
+  # Returns data in the format set by Configuration#data_format.
+  # :struct (default) — dot-access via DataNode
+  # :hash             — raw Ruby Hash / Array / scalar
   def data
-    @mutex.synchronize { @data }
+    StateSync.configuration.data_format == :hash ? raw_data : struct_data
   end
 
-  # Shorthand key access when the YAML root is a Hash.
+  # Shorthand key access (delegates to #data).
   def [](key)
-    @mutex.synchronize { @data[key] }
+    data[key]
   end
 
   # Force an immediate re-fetch from the configured provider.
@@ -41,8 +43,25 @@ class StateSync::Store
 
   def fetch_and_cache
     content = @fetcher.fetch(@path)
-    parsed  = YAML.safe_load(content)
-    @mutex.synchronize { @data = parsed }
+    raw     = YAML.safe_load(content)
+    struct  = wrap_root(raw)
+    @mutex.synchronize { @raw = raw; @struct = struct }
+  end
+
+  def raw_data
+    @mutex.synchronize { @raw }
+  end
+
+  def struct_data
+    @mutex.synchronize { @struct }
+  end
+
+  def wrap_root(value)
+    case value
+    when Hash  then StateSync::DataNode.new(value)
+    when Array then value.map { |v| v.is_a?(Hash) ? StateSync::DataNode.new(v) : v }
+    else value
+    end
   end
 
   def start_background_refresh

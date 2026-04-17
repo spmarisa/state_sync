@@ -1,0 +1,15 @@
+a_string: hello world
+a_quoted_string: "with spaces and special chars: !@#"
+an_integer: 42
+a_negative_integer: -7
+a_float: 3.14
+a_negative_float: -0.5
+a_true: true
+a_false: false
+a_null_keyword: null
+a_null_tilde: ~
+# Note: YAML date/time types (2024-01-15, 2024-01-15T10:30:00Z) are not loadable
+# with YAML.safe_load without explicitly permitting Date/Time classes.
+# Store them as strings if date semantics are not needed.
+a_date_string: "2024-01-15"
+a_datetime_string: "2024-01-15T10:30:00Z"

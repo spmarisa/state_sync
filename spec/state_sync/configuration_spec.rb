@@ -9,6 +9,7 @@ RSpec.describe StateSync::Configuration do
     it { expect(config.auto_refresh_interval).to eq 300 }
     it { expect(config.token).to be_nil }
     it { expect(config.repo).to be_nil }
+    it { expect(config.data_format).to eq :struct }
   end
 
   describe "#validate!" do
@@ -63,6 +64,26 @@ RSpec.describe StateSync::Configuration do
       before do
         config.repo     = "owner/repo"
         config.provider = :gitlab
+      end
+
+      it "does not raise" do
+        expect { config.validate! }.not_to raise_error
+      end
+    end
+
+    context "when data_format is invalid" do
+      before { config.repo = "owner/repo" }
+
+      it "raises ConfigurationError" do
+        config.data_format = :xml
+        expect { config.validate! }.to raise_error(StateSync::ConfigurationError, /data_format must be :struct or :hash/)
+      end
+    end
+
+    context "when data_format is :hash" do
+      before do
+        config.repo        = "owner/repo"
+        config.data_format = :hash
       end
 
       it "does not raise" do

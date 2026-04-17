@@ -24,8 +24,13 @@ RSpec.describe StateSync::Store do
   subject(:store) { described_class.new("config/customers.yml") }
 
   describe "#data" do
-    it "returns the parsed YAML as a Hash" do
-      expect(store.data).to eq("customer_ids" => [1, 2, 3], "feature_x" => true)
+    it "returns a DataNode" do
+      expect(store.data).to be_a(StateSync::DataNode)
+    end
+
+    it "exposes top-level keys as methods" do
+      expect(store.data.customer_ids).to eq [1, 2, 3]
+      expect(store.data.feature_x).to be true
     end
   end
 
@@ -78,8 +83,10 @@ RSpec.describe StateSync::Store do
         .to_return(status: 200, body: yaml_content)
     end
 
-    it "fetches from gitlab and returns parsed data" do
-      expect(store.data).to eq("customer_ids" => [1, 2, 3], "feature_x" => true)
+    it "fetches from gitlab and returns a DataNode" do
+      expect(store.data).to be_a(StateSync::DataNode)
+      expect(store.data.customer_ids).to eq [1, 2, 3]
+      expect(store.data.feature_x).to be true
     end
   end
 end

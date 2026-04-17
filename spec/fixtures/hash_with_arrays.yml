@@ -1,0 +1,17 @@
+tags:
+  - ruby
+  - yaml
+  - config
+admins:
+  - name: Alice
+    role: superadmin
+  - name: Bob
+    role: admin
+scores:
+  - 95
+  - 87
+  - 100
+mixed:
+  - hello
+  - 42
+  - true

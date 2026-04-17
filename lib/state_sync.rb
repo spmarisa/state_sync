@@ -1,6 +1,7 @@
 require "state_sync/version"
 require "state_sync/errors"
 require "state_sync/configuration"
+require "state_sync/data_node"
 require "state_sync/store"
 Dir[File.join(__dir__, "state_sync/fetchers/*.rb")].each { |f| require f }
 
