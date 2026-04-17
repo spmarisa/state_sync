@@ -16,8 +16,7 @@ module StateSync
     end
 
     # Loads a YAML file from the configured provider (GitHub or GitLab) and returns a Store.
-    # The file is fetched immediately; if auto_refresh is enabled a background
-    # thread keeps it updated at the configured interval.
+    # The file is fetched immediately on this call.
     #
     # Example:
     #   customers = StateSync.load("config/customers.yml")

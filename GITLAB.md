@@ -7,7 +7,7 @@
 ## Public projects
 
 No token is required for public projects. You can omit `config.token` entirely.
-A token is still recommended to avoid hitting rate limits, especially when `auto_refresh` is enabled.
+A token is still recommended to avoid hitting rate limits.
 
 ---
 
@@ -66,41 +66,19 @@ config.token = Rails.application.credentials.dig(:gitlab, :state_sync_token)
 ## Rate limits
 
 GitLab rate limits vary by plan and instance. Files over 10 MB are limited to 5 requests/minute.
-Always use a token when `auto_refresh` is enabled.
+Always use a token in production.
 
 ---
 
-## Examples
-
-### Without auto refresh
-
-Data is fetched once when the server starts. It does not change until the server restarts.
+## Example
 
 ```ruby
 StateSync.configure do |config|
-  config.provider     = :gitlab
-  config.repo         = "your-org/your-repo"
-  config.token        = ENV["GITLAB_TOKEN"]
-  config.auto_refresh = false
+  config.provider = :gitlab
+  config.repo     = "your-org/your-repo"
+  config.token    = ENV["GITLAB_TOKEN"]
 end
 
 customers = StateSync.load("config/customers.yml")
 customers["customer_ids"]   # => [1001, 1002, 1003]
-```
-
-### With auto refresh
-
-Data is fetched at startup and a background thread keeps it updated at the configured interval.
-
-```ruby
-StateSync.configure do |config|
-  config.provider         = :gitlab
-  config.repo             = "your-org/your-repo"
-  config.token            = ENV["GITLAB_TOKEN"]
-  config.auto_refresh     = true
-  config.auto_refresh_interval = 300   # seconds
-end
-
-customers = StateSync.load("config/customers.yml")
-customers["customer_ids"]   # => always current
 ```
