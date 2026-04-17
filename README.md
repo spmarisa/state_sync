@@ -61,6 +61,43 @@ customer_ids:
 feature_x: true
 ```
 
+### data_format: :struct vs :hash
+
+By default (`data_format: :struct`) data is returned as an OpenStruct, allowing dot-access on nested keys:
+
+```yaml
+# config/settings.yml
+database:
+  host: db.example.com
+  port: 5432
+app:
+  debug: false
+```
+
+```ruby
+config.data_format = :struct   # default
+
+SETTINGS = StateSync.load("config/settings.yml")
+
+SETTINGS.data.database.host    # => "db.example.com"
+SETTINGS.data.database.port    # => 5432
+SETTINGS.data.app.debug        # => false
+```
+
+With `data_format: :hash` data is returned as a plain Ruby Hash:
+
+```ruby
+config.data_format = :hash
+
+SETTINGS = StateSync.load("config/settings.yml")
+
+SETTINGS.data["database"]["host"]   # => "db.example.com"
+SETTINGS.data["database"]["port"]   # => 5432
+SETTINGS["app"]["debug"]            # => false
+```
+
+---
+
 ### Loading multiple files
 
 You can load as many files as you need — each gets its own store with independent data. Define them in your initializer and use them anywhere in your app:
